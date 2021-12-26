@@ -44,10 +44,10 @@ int main(int argc,char* args[])
 	image point;
 	
 	point.loadImg("resource/point.png");
-	point.w=50;
-	point.h=50;
+	point.w=300;
+	point.h=360;
 	point.x=(WINDOW_W/2)-(point.w/2);
-	point.y=100;
+	point.y=160;
 	//END
 	
 	//BEGIN rouret obj
