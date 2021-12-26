@@ -30,6 +30,16 @@ int main(int argc,char* args[])
 	}
 	//END
 	
+	//Begin background obj
+	image background;
+	
+	background.loadImg("resource/background.png");
+	background.x=0;
+	background.y=0;
+	background.w=WINDOW_W;
+	background.h=WINDOW_H;
+	//END
+	
 	//BEGIN point obj
 	image point;
 	
@@ -60,6 +70,7 @@ int main(int argc,char* args[])
 	 }
 	 roulet.event();
 	 renderClear();
+	 background.render();
 	 roulet.render();
 	 point.render();
 	 renderShow();
