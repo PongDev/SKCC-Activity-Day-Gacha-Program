@@ -52,12 +52,12 @@ class roulet
 		  fps[2]=1;
 		  fps[3]=5;
 		  fps[4]=10;
-		  fps[5]=15;
+		  fps[5]=10;
 		  statetargetdegree[0]=0;
 		  statetargetdegree[2]=810;
 		  statetargetdegree[3]=450;
 		  statetargetdegree[4]=270;
-		  statetargetdegree[5]=180;
+		  statetargetdegree[5]=90;
 		  statetargetdegree[1]=(((360-((statetargetdegree[2]+statetargetdegree[3]+statetargetdegree[4]+statetargetdegree[5])%360))+targetdegree+(360-degree))%360)+(360*(rand()%3));
 		  //END
 		  
@@ -75,7 +75,7 @@ class roulet
 		 	 2	 move fps  1 ,810 degree
 		 	 3	 move fps  5,450 degree
 		 	 4	 move fps 10 ,270 degree
-		  	 5	 move fps 15 ,180 degree
+		  	 5	 move fps 100 ,180 degree
 		 END*/
 	 	 if (SDL_GetTicks()-lasttime>=fps[state])
 	 	 {
