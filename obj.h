@@ -103,7 +103,30 @@ class roulet
 		   fprintf(logFile,"[System/Roulet] Waring No Item Left\n");
 		   return;
 		  }
+		  
+		  #if USE_PERCENT
+		  int randompercent;
+		  do
+		  {
+		   randompercent=rand()%100;
+		   printf("[System/Roulet] Use Random Percent %d\n",randompercent);
+		   fprintf(logFile,"[System/Roulet] Use Random Percent %d\n",randompercent);
+		   if (randompercent>=0&&randompercent<2)randomitem=1;//Flashdrive
+		   else if (randompercent>=2&&randompercent<29)randomitem=2;//Salt&Snack
+		   else if (randompercent>=29&&randompercent<56)randomitem=3;//Pen
+		   else if (randompercent>=56&&randompercent<59)randomitem=4;//Wristband
+		   else if (randompercent>=59&&randompercent<70)randomitem=5;//Candy
+		   else if (randompercent>=70&&randompercent<70)randomitem=6;//Surprise!
+		   else if (randompercent>=70&&randompercent<85)randomitem=7;//Milo&Snack
+		   else if (randompercent>=85&&randompercent<100)randomitem=8;//Snack
+		  }
+		  while(itemleft[randomitem]==0);
+		  itemleft[randomitem]--;
+		  saveData();
+		  #else
 		  randomitem=(rand()%calculateItemLeft())+1;
+		  printf("[System/Roulet] Use Random ID %d\n",randomitem);
+		  fprintf(logFile,"[System/Roulet] Use Random ID %d\n",randomitem);
 		  for(int c=1;c<MAX_ITEM+1;c++)
 		  {
 		   randomitem-=itemleft[c];
@@ -115,6 +138,8 @@ class roulet
 		   	break;
 		   }
 		  }
+		  #endif
+		  
 		  targetdegree=(360-((randomitem-1)*(360/MAX_ITEM)))%360;
 		  printf("[Gacha] Get Item ID %d [%s]\n",randomitem,itemname[randomitem].c_str());
 		  fprintf(logFile,"[Gacha] Get Item ID %d [%s]\n",randomitem,itemname[randomitem].c_str());
