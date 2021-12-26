@@ -8,12 +8,15 @@ SDL_Window *window=NULL;
 SDL_Surface *screen=NULL;
 SDL_Renderer *render=NULL;
 SDL_Event e;
+FILE *logFile;
 
 bool init()
 {
+	logFile=fopen("log.txt","a+");
 	if (SDL_Init(SDL_INIT_VIDEO)<0)
 	{
 	 printf("[System/SDL] Initialize Error %s\n",SDL_GetError());
+	 fprintf(logFile,"[System/SDL] Initialize Error %s\n",SDL_GetError());
 	 return false;
 	}
 	if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY,"1"))printf("[System/SDL] Warning Linear texture filtering not eanbled\n");
@@ -23,12 +26,14 @@ bool init()
 	if (window==NULL)
 	{
 	 printf("[System/SDL] CreateWindow(); Error %s\n",SDL_GetError());
+	 fprintf(logFile,"[System/SDL] CreateWindow(); Error %s\n",SDL_GetError());
 	 return false;
 	}
 	render=SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
 	if (render==NULL)
 	{
 	 printf("[System/SDL] CreateRender(); Error %s\n",SDL_GetError());
+	 fprintf(logFile,"[System/SDL] CreateRender(); Error %s\n",SDL_GetError());
 	 return false;
 	}
 	SDL_SetRenderDrawColor(render,0xFF,0xFF,0xFF,0xFF);
@@ -36,6 +41,7 @@ bool init()
 	if (!(IMG_Init(imgFlags)&imgFlags))
 	{
 	 printf("[System/SDL] SDL_image Initialize Error %s\n",IMG_GetError());
+	 fprintf(logFile,"[System/SDL] SDL_image Initialize Error %s\n",IMG_GetError());
 	 return false;
 	}
 	screen=SDL_GetWindowSurface(window);
@@ -55,6 +61,7 @@ SDL_Texture* loadImage(string loc)
 	if (load==NULL)
 	{
 	 printf("[System/SDL] IMG_Load(); Error %s\n",IMG_GetError());
+	 fprintf(logFile,"[System/SDL] IMG_Load(); Error %s\n",IMG_GetError());
 	 return NULL;
 	}
 	SDL_SetColorKey(load,SDL_TRUE,SDL_MapRGB(load->format,0,0xFF,0xFF));
@@ -62,6 +69,7 @@ SDL_Texture* loadImage(string loc)
 	if (tmp==NULL)
 	{
 	 printf("[System/SDL] SDL_CreateTextureFromSurface(); Error %s\n",IMG_GetError());
+	 fprintf(logFile,"[System/SDL] SDL_CreateTextureFromSurface(); Error %s\n",IMG_GetError());
 	 return NULL;
 	}
 	SDL_FreeSurface(load);
@@ -76,4 +84,9 @@ void renderShow()
 void renderClear()
 {
 	SDL_RenderClear(render);
+}
+
+void close()
+{
+	fclose(logFile);
 }

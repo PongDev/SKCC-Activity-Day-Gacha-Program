@@ -28,9 +28,57 @@ class roulet
 		SDL_Texture *img=NULL;
 		SDL_Event e;
 		int x=0,y=0,w=0,h=0,state=0;
-		int degree=0,targetdegree,fps[6],statetargetdegree[6];
+		int degree=0,targetdegree,fps[6],statetargetdegree[6],randomitem,itemleft[MAX_ITEM+1];
+		string itemname[MAX_ITEM+1];
 		Uint32 lasttime=0;
+		string rouletSaveData;
 		
+		void init(string loc)
+		{
+		 memset(&itemleft,0,sizeof(itemleft));
+		 itemname[1]="Flashdrive";
+		 itemname[2]="Salt&Snack";
+		 itemname[3]="Pen";
+		 itemname[4]="Wristband";
+		 itemname[5]="Candy";
+		 itemname[6]="Surprise!";
+		 itemname[7]="Milo&Snack";
+		 itemname[8]="Snack";
+		 rouletSaveData=loc;
+		 loadData();
+		}
+		void loadData()
+		{
+		 FILE *rouletFile=fopen(rouletSaveData.c_str(),"r");
+		 if (rouletFile==NULL)
+		 {
+		  saveData();
+		  return;
+		 }
+		 char read[2048];
+		 
+		 for(int c=1;c<MAX_ITEM+1;c++)
+		 {
+		  if (!fgets(read,2048,rouletFile))
+		  {
+		   printf("[System/Roulet] Load Data Failed\n");
+		   fprintf(logFile,"[System/Roulet] Load Data Failed\n");
+		   break;
+		  }
+		  sscanf(read,"%d",&itemleft[c]);
+		 }
+		 fclose(rouletFile);
+		}
+		void saveData()
+		{
+		 FILE *rouletFile=fopen(rouletSaveData.c_str(),"w");
+		 
+		 for(int c=1;c<MAX_ITEM+1;c++)
+		 {
+		  fprintf(rouletFile,"%d %s\n",itemleft[c],itemname[c].c_str());
+		 }
+		 fclose(rouletFile);
+		}
 		void render()
 		{
 		 renderImage(x,y,w,h,degree,img);
@@ -39,12 +87,45 @@ class roulet
 		{
 		 img=loadImage(loc);
 		}
+		int calculateItemLeft()
+		{
+		 int r=0;
+		 for(int c=1;c<MAX_ITEM+1;c++)r+=itemleft[c];
+		 return r;
+		}
 		void activate()
 		{
 		 if (state==0)
 		 {
-		  targetdegree=(rand()%MAX_ITEM)*(360/MAX_ITEM);
-		  printf("%d\n",(((360-targetdegree)/(360/MAX_ITEM))%8)+1);
+		  if (calculateItemLeft()==0)
+		  {
+		   printf("[System/Roulet] Waring No Item Left\n");
+		   fprintf(logFile,"[System/Roulet] Waring No Item Left\n");
+		   return;
+		  }
+		  randomitem=(rand()%calculateItemLeft())+1;
+		  for(int c=1;c<MAX_ITEM+1;c++)
+		  {
+		   randomitem-=itemleft[c];
+		   if (randomitem<=0)
+		   {
+		   	randomitem=c;
+		   	itemleft[c]--;
+		   	saveData();
+		   	break;
+		   }
+		  }
+		  targetdegree=(360-((randomitem-1)*(360/MAX_ITEM)))%360;
+		  printf("[Gacha] Get Item ID %d [%s]\n",randomitem,itemname[randomitem].c_str());
+		  fprintf(logFile,"[Gacha] Get Item ID %d [%s]\n",randomitem,itemname[randomitem].c_str());
+		  printf("\nItem Left\n");
+		  fprintf(logFile,"\nItem Left\n");
+		  for(int c=1;c<MAX_ITEM+1;c++)
+		  {
+		   printf("Item ID %d [%s] Left %d\n",c,itemname[c].c_str(),itemleft[c]);
+		  }
+		  printf("\n");
+		  fprintf(logFile,"\n");
 		 
 		  //BEGIN set fps and degree
 		  fps[0]=0;
@@ -73,9 +154,9 @@ class roulet
 		 	 0	 stop
 		 	 1	 move fps  1 ,x degree
 		 	 2	 move fps  1 ,810 degree
-		 	 3	 move fps  5,450 degree
+		 	 3	 move fps  5 ,450 degree
 		 	 4	 move fps 10 ,270 degree
-		  	 5	 move fps 100 ,180 degree
+		  	 5	 move fps 10 ,90 degree
 		 END*/
 	 	 if (SDL_GetTicks()-lasttime>=fps[state])
 	 	 {

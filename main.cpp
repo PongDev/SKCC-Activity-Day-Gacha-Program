@@ -10,6 +10,7 @@ int main(int argc,char* args[])
 	if (init()==0)
 	{
 	 printf("[System] Initialize Error\n");
+	 fprintf(logFile,"[System] Initialize Error\n");
 	 return 0;
 	}
 	
@@ -42,6 +43,7 @@ int main(int argc,char* args[])
 	//BEGIN rouret obj
 	roulet roulet;
 	
+	roulet.init("roulet");
 	roulet.loadImg("resource/roulet.png");
 	roulet.w=800;
 	roulet.h=800;
@@ -54,7 +56,7 @@ int main(int argc,char* args[])
 	 while(SDL_PollEvent(&e)!=0)
 	 {
 	  if (e.type==SDL_QUIT)run=false;
-	  if (e.type==SDL_KEYDOWN)roulet.activate();
+	  if (e.type==SDL_KEYUP)roulet.activate();
 	 }
 	 roulet.event();
 	 renderClear();
@@ -62,4 +64,5 @@ int main(int argc,char* args[])
 	 point.render();
 	 renderShow();
 	}
+	close();
 }
